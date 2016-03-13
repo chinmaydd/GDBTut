@@ -10,10 +10,6 @@ import time
 # For debugging purposes
 import pdb
 
-# For storing of data?
-import pickledb
-db = pickledb.load('storage.db', 'False')
-
 p = None
 
 app = bottle.Bottle()
@@ -47,7 +43,7 @@ def execute_in_gdb(cmd):
         return "Thank you for using GDB"
 #     pdb.set_trace()
     p.stdin.write(cmd + '\n')
-    time.sleep(1)
+    time.sleep(2)
     try:
         # pdb.set_trace()
         output = p.stdout.read()
@@ -72,11 +68,28 @@ def execute():
 
     return response_variable
 
-@app.route("/static/<filename>", method="GET")
+# Static Routes
+@app.get('/<filename:re:.*\.js>')
+def javascripts(filename):
+    return static_file(filename, root='static/js')
+
+@app.get('/<filename:re:.*\.css>')
+def stylesheets(filename):
+    return static_file(filename, root='static/css')
+
+@app.get('/<filename:re:.*\.(jpg|png|gif|ico)>')
+def images(filename):
+    return static_file(filename, root='static/img')
+
+@app.get('/<filename:re:.*\.(eot|ttf|woff|svg)>')
+def fonts(filename):
+    return static_file(filename, root='static/fonts')
+
+@app.route("/", method="GET")
 @enable_cors
-def index(filename):
+def home():
     initialize()
-    return static_file(filename, root='./')
+    return static_file('index.html', root='')
 
 if __name__ == '__main__':
     from optparse import OptionParser

@@ -26,6 +26,7 @@
  */
 (function() {
 
+  var level = Array(20);
   var $output;
   var _inited = false;
   var _locked = false;
@@ -55,167 +56,16 @@
 
   var _commands = {
 
-    sound: function(volume, duration, freq) {
-      if ( !window.webkitAudioContext ) {
-        return ['Your browser does not support his feature :('];
-      }
-
-      volume = ((volume || '').replace(/[^0-9]/g, '') << 0) || 100;
-      duration = ((duration || '').replace(/[^0-9]/g, '') << 0) || 1;
-      freq = ((freq || '').replace(/[^0-9]/g, '') << 0) || 1000;
-
-      var context = new webkitAudioContext();
-      var osc = context.createOscillator();
-      var vol = context.createGainNode();
-
-      vol.gain.value = volume/100;
-      osc.frequency.value = freq;
-      osc.connect(vol);
-      vol.connect(context.destination);
-      osc.start(context.currentTime);
-
-      setTimeout(function() {
-        osc.stop();
-        osc = null;
-        context = null;
-        vol = null;
-      }, duration*1000);
-
-      return ([
-        'Volume:    ' + volume,
-        'Duration:  ' + duration,
-        'Frequenzy: ' + freq
-      ]).join("\n");
-    },
-
-    ls: function(dir) {
-      dir = parsepath((dir || _cwd));
-
-      var out = [];
-      var iter = getiter(dir);
-
-      var p;
-      var tree = (iter && iter.type == 'dir') ? iter.files : _filetree;
-      var count = 0;
-      var total = 0;
-
-      for ( var i in tree ) {
-        if ( tree.hasOwnProperty(i) ) {
-          p = tree[i];
-          if ( p.type == 'dir' ) {
-            out.push(format('{0} {1} {2}', padRight('<'+i+'>', 20), padRight(p.type, 20), '0'));
-          } else {
-            out.push(format('{0} {1} {2}', padRight(i, 20), padRight(p.mime, 20), p.content.length));
-            total += p.content.length;
-          }
-          count++;
-        }
-      }
-
-      out.push(format("\n{0} file(s) in total, {1} byte(s)", count, total));
-
-      return out.join("\n");
-    },
-
-    cd: function(dir) {
-      if ( !dir ) {
-        return (["You need to supply argument: dir"]).join("\n");
-      }
-
-      var dirname = parsepath(dir);
-      var iter = getiter(dirname);
-      if ( dirname == '/' || (iter && iter.type == 'dir')) {
-        _cwd = dirname;
-        return (['Entered: ' + dirname]).join("\n");
-      }
-
-      return (["Path not found: " + dirname]).join("\n");
-    },
-
-    cat: function(file) {
-      if ( !file ) {
-        return (["You need to supply argument: filename"]).join("\n");
-      }
-
-      var filename = parsepath(file);
-      var iter = getiter(filename);
-      if ( !iter ) {
-        return (["File not found: " + filename]).join("\n");
-      }
-
-      return iter.content;
-    },
-
-    cwd: function() {
-      return (['Current directory: ' + _cwd]).join("\n");
-    },
-
     clear: function() {
       return false;
-    },
-
-    contact: function(key) {
-      key = key || '';
-      var out = [];
-
-      switch ( key.toLowerCase() ) {
-        case 'email' :
-          window.open('mailto:andersevenrud@gmail.com');
-          break;
-        case 'github' :
-          window.open('https://github.com/andersevenrud/');
-          break;
-        case 'linkedin' :
-          window.open('http://www.linkedin.com/in/andersevenrud');
-          break;
-        case 'youtube' :
-          window.open('https://www.youtube.com/user/andersevenrud');
-          break;
-        case 'worpress' :
-          window.open('http://anderse.wordpress.com/');
-          break;
-        case 'twitter' :
-          window.open('https://twitter.com/#!/andersevenrud');
-          break;
-        case 'google+' :
-          window.open('https://profiles.google.com/101576798387217383063?rel=author');
-          break;
-
-        default :
-          if ( key.length ) {
-            out = ['Invalid key: ' + key];
-          } else {
-            out = [
-              "Contact information:\n",
-              'Name:      Anders Evenrud',
-              'Email:     andersevenrud@gmail.com',
-              'Github:    https://github.com/andersevenrud/',
-              'LinkedIn:  http://www.linkedin.com/in/andersevenrud',
-              'YouTube:   https://www.youtube.com/user/andersevenrud',
-              'Wordpress: http://anderse.wordpress.com/',
-              'Twitter:   https://twitter.com/#!/andersevenrud',
-              'Google+:   https://profiles.google.com/101576798387217383063?rel=author'
-            ];
-          }
-          break;
-      }
-
-      return out.join("\n");
     },
 
     help: function() {
       var out = [
         'help                                         This command',
-        'contact                                      How to contact author',
-        'contact <key>                                  Open page (example: `email` or `google+`)',
         'clear                                        Clears the screen',
-        'ls                                           List current (or given) directory contents',
-        'cd <dir>                                     Enter directory',
-        'cat <filename>                               Show file contents',
-        'sound [<volume 0-100>, <duration>, <freq>]   Generate a sound (WebKit only)',
         ''
       ];
-
       return out.join("\n");
     }
 
@@ -373,7 +223,6 @@
 
   function command(cmd) {
     print("\n");
-    debugger
     if ( cmd.length ) {
         var a = cmd.split(' ');
         var c = a.shift();
@@ -394,11 +243,20 @@
           contentType: "application/json; charset=utf-8",
           data: JSON.stringify({'command': cmd}),
           success: function(data) {
+            debugger
               var result = data['result'];
               result += "\n"
               print(result || "\n", true);
           },
-        })).done(function() {_history.push(cmd);print("\n\n" + _prompt());});
+        })).done(function() {
+        _history.push(cmd);
+        if(cmd == 'run' && typeof(level[0]) == 'undefined'){
+          level[0] = 1;
+          print("\n\nSo, now you see the output of the given program and observe that it exited normally with with code 015.\nWe will now perform some deeper analysis based on certain features that gdb provides.\n", true);
+          print("Congrats! You completed level1. Off to the next one!", true);
+        }
+        print("\n\n" + _prompt());
+      });
       }
     }
     _hindex = -1;
@@ -527,8 +385,15 @@
 
     print(padCenter("Welcome to the GDB tutorial.\n", 113), true);
 
-    print("\n\n\n\n\n", true);
-    print("Type 'help' for a list of available commands.\n", true);
+    print("\n\n", true);
+    print("GDB, the GNU Project debugger, allows you to see what is going on `inside' another program while it executes -- or what another program was doing at the moment it crashed.\n\n\n", true);
+    print("GDB can do four main kinds of things (plus other things in support of these) to help you catch bugs in the act:\n", true);
+    print("• Start your program, specifying anything that might affect its behavior.\n", true);
+    print("• Make your program stop on specified conditions.\n", true);
+    print("• Examine what has happened, when your program has stopped.\n", true);
+    print("• Change things in your program, so you can experiment with correcting the effects of one bug and go on to learn about another.\n\n", true);
+    // print("Type 'help' for a list of available commands.\n", true);
+    print("Let us run our program now, shall we? Please type 'run' in the prompt to clear level1.\n", true);
     print("\n\n" + _prompt());
 
   };
