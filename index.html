@@ -1,10 +1,9 @@
-<!-- Hello, world -->
 <html>
     <head>
         <script src="jquery.min.js"></script>
     </head>
     <body>
-    <div id="current_status" /><br />
+    <div id="current_status"></div><br />
         <input id="to_execute" />
         <input type="button" id="execute" onclick='send_data();' value="Execute!" />
         <script>
@@ -17,8 +16,9 @@
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify({'command': to_send_data}),
                     success: function(data) {
-                        alert("Ola!");
-                        console.log(data);
+                        var display_text = data['result'];
+                        display_text = display_text.replace(/\n/g, "<br />");
+                        $("#current_status").html(display_text);
                     },
                 });
             }

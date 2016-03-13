@@ -3,7 +3,9 @@ import bottle
 from bottle import route, run, template, request, response, static_file, error
 
 # For executing system commands
-import subprocess
+import subprocess, fcntl, os
+
+import time
 
 # For debugging purposes
 import pdb
@@ -12,7 +14,7 @@ import pdb
 import pickledb
 db = pickledb.load('storage.db', 'False')
 
-p1 = None
+p = None
 
 app = bottle.Bottle()
 
@@ -31,27 +33,40 @@ def enable_cors(fn):
     return _enable_cors
 
 def initialize():
-    global p1
-    p1 = subprocess.Popen(['gdb', 'test/a.out'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    global p
+    p = subprocess.Popen(['gdb', 'test/a.out'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    fcntl.fcntl(p.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
 
 @app.error(404)
 def error404(error):
     return "Nothing here, Sorry"
 
-def execute_in_gdb():
-    pdb.set_trace()
-    return "Something, new"
+def execute_in_gdb(cmd):
+    if cmd == "quit":
+        p.kill()
+        return "Thank you for using GDB"
+#     pdb.set_trace()
+    p.stdin.write(cmd + '\n')
+    time.sleep(2)
+    try:
+        output = p.stdout.read()
+        output = output.split("\n")[:-1]
+        output = "\n".join(output)
+    except IOError:
+        output = "An error occurred. Please try again."
+
+    return output
 
 @app.route("/api/v1/execute", method=["POST", "OPTIONS"])
 @enable_cors
 def execute():
     req = request.json
-    new_cmd = req['command']
+    cmd = req['command']
 
     response.content_type = "application/json"
     response_variable = {}
 
-    result = execute_in_gdb()
+    result = execute_in_gdb(cmd)
     response_variable['result'] = result
 
     return response_variable
