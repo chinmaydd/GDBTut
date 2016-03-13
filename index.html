@@ -1,27 +1,20 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <script src="jquery.min.js"></script>
-    </head>
-    <body>
-    <div id="current_status"></div><br />
-        <input id="to_execute" />
-        <input type="button" id="execute" onclick='send_data();' value="Execute!" />
-        <script>
-            function send_data() {
-                var to_send_data = $("#to_execute").val();
-                $.ajax({
-                    type: "POST",
-                    url: "http://127.0.0.1:8080/api/v1/execute",
-                    dataType: "json",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify({'command': to_send_data}),
-                    success: function(data) {
-                        var display_text = data['result'];
-                        display_text = display_text.replace(/\n/g, "<br />");
-                        $("#current_status").html(display_text);
-                    },
-                });
-            }
-        </script>
-    </body>
+  <head>
+    <title>GDB Tutorial</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <div id="outer">
+      <div id="screen">
+        <div id="layer">
+          <textarea id="output"></textarea>
+        </div>
+        <div id="overlay"></div>
+      </div>
+      <div id="led"></div>
+    </div>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+  </body>
 </html>

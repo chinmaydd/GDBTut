@@ -34,7 +34,7 @@ def enable_cors(fn):
 
 def initialize():
     global p
-    p = subprocess.Popen(['gdb', 'test/a.out'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(['gdb', '-silent', 'test/a.out'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     fcntl.fcntl(p.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
 
 @app.error(404)
@@ -47,8 +47,9 @@ def execute_in_gdb(cmd):
         return "Thank you for using GDB"
 #     pdb.set_trace()
     p.stdin.write(cmd + '\n')
-    time.sleep(2)
+    time.sleep(1)
     try:
+        # pdb.set_trace()
         output = p.stdout.read()
         output = output.split("\n")[:-1]
         output = "\n".join(output)
