@@ -1,1 +1,27 @@
-Hello, world
+<!-- Hello, world -->
+<html>
+    <head>
+        <script src="jquery.min.js"></script>
+    </head>
+    <body>
+    <div id="current_status" /><br />
+        <input id="to_execute" />
+        <input type="button" id="execute" onclick='send_data();' value="Execute!" />
+        <script>
+            function send_data() {
+                var to_send_data = $("#to_execute").val();
+                $.ajax({
+                    type: "POST",
+                    url: "http://127.0.0.1:8080/api/v1/execute",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({'command': to_send_data}),
+                    success: function(data) {
+                        alert("Ola!");
+                        console.log(data);
+                    },
+                });
+            }
+        </script>
+    </body>
+</html>
