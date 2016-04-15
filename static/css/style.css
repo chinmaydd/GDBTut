@@ -345,6 +345,7 @@ body {
   background : transparent;
   font-family : MyFont, Monospace;
   font-size : 15px;
+/*  overflow-y: scroll;*/
   line-height : 20px;
   /*color : #00ff77;*/
   color : #18FF62;

@@ -33,6 +33,8 @@ def initialize():
     p = subprocess.Popen(['gdb', '-silent', 'test/a.out'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     fcntl.fcntl(p.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
 
+    subprocess.Popen(['play', '-q', 'test.mp3'])
+
 @app.error(404)
 def error404(error):
     return "Nothing here, Sorry"
@@ -40,7 +42,7 @@ def error404(error):
 def execute_in_gdb(cmd):
     if cmd == "quit":
         p.kill()
-        return "Thank you for using GDB"
+        return "Thank you for using GDB."
 #     pdb.set_trace()
     p.stdin.write(cmd + '\n')
     time.sleep(2)

@@ -305,15 +305,19 @@
       } else {
         if ( k == 9 ) {
           cancel = true;
-        } else if ( k == 38 ) {
+        } else if ( k == 38 && !ev.ctrlKey ) {
           nextHistory();
           cancel = true;
-        } else if ( k == 40 ) {
+        } else if ( k == 40 && !ev.ctrlKey ) {
           cancel = true;
+        } else if ( k == 38 && ev.ctrlKey ) {
+          $output.scrollTop -= 20;
+        } else if ( k == 40 && ev.ctrlKey ) {
+          $output.scrollTop += 20;
         } else if ( k == 37 || k == 39 ) {
           cancel = true;
-        }
       }
+    }
 
       if ( cancel ) {
         ev.preventDefault();
@@ -340,11 +344,15 @@
       }
 
       var k = ev.which || ev.keyCode;
+      debugger
       if ( k == 13 ) {
         var cmd = _buffer.join('').replace(/\s+/, ' ');
         _buffer = [];
         command(cmd);
-      } else {
+      } else if (k == 33) {
+        debugger
+      }
+      else {
         if ( !_locked ) {
           var kc = String.fromCharCode(k);
           _buffer.push(kc);
