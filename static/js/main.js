@@ -26,7 +26,7 @@
  */
 (function() {
 
-  var level = Array(20);
+  var level = 0;
   var $output;
   var _inited = false;
   var _locked = false;
@@ -39,21 +39,6 @@
   var _hindex = -1;
   var _lhindex = -1;
 
-  var _filetree = {
-    'documents': {type: 'dir', files: {
-      'example1': {type: 'file', mime: 'text/plain', content: "This is just an example file"},
-      'example2': {type: 'file', mime: 'text/plain', content: "This is just an example file. What did you think it was?"},
-      'example3': {type: 'file', mime: 'text/plain', content: "This is just an example file. I'm super cereal!"},
-      'example4': {type: 'file', mime: 'text/plain', content: "This is just an example file. Such wow!"},
-      'example5': {type: 'file', mime: 'text/plain', content: "This is just an example file. Jelly much?"}
-    }},
-    'storage':   {type: 'dir', files: {
-    }},
-    'AUTHORS': {type: 'file', mime: 'text/plain', content: "Created by Anders Evenrud <andersevenrud@gmail.com>\n\nThis is a demo using CSS only for graphics (no images), and JavaScript for a basic command line"},
-    'README' : {type: 'file', mime: 'text/plain', content: 'All you see here is CSS. No images were used or harmed in creation of this demo'},
-    'LICENSE': {type: 'file', mime: 'text/plain', content: "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."}
-  };
-
   var _commands = {
 
     clear: function() {
@@ -64,7 +49,6 @@
       var out = [
         'help                                         This command',
         'clear                                        Clears the screen',
-        ''
       ];
       return out.join("\n");
     }
@@ -250,11 +234,21 @@
           },
         })).done(function() {
         _history.push(cmd);
-        if(cmd == 'run' && typeof(level[0]) == 'undefined'){
-          level[0] = 1;
-          print("\n\nSo, now you see the output of the given program and observe that it exited normally with with code 015.\nWe will now perform some deeper analysis based on certain features that gdb provides.\n", true);
-          print("Congrats! You completed level1. Off to the next one!", true);
+
+        if (cmd == 'help' && level == 0) {
+          level ++;
+          print("\nThe above is the help menu! You can try out commands from the same and explore the environment.\nWhen ready, type 'run'.", true);
         }
+        else if(cmd == 'run' && level==1) {
+          level++;
+          print("\n\nSo, now you see the output of the given program and observe that it exited normally with with code 015.\nWe will now perform some deeper analysis based on certain features that gdb provides.\n", true);
+          print("\nTo continue, let us have a look at the main function. To print a particular function, type 'l <function_name>'.", true);
+        } else if (cmd == 'l' && level==2) {
+          print("\nTo continue, let us have a look at the main function. To print a particular function, type 'l <function_name>'.", true);
+        }
+
+
+
         print("\n\n" + _prompt());
       });
       }

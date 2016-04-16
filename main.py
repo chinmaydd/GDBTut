@@ -33,7 +33,7 @@ def initialize():
     p = subprocess.Popen(['gdb', '-silent', 'test/a.out'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     fcntl.fcntl(p.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
 
-    subprocess.Popen(['play', '-q', 'test.mp3'])
+    # subprocess.Popen(['play', '-q', 'test.mp3'])
 
 @app.error(404)
 def error404(error):
