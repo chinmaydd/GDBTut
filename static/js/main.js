@@ -241,11 +241,44 @@
         }
         else if(cmd == 'run' && level==1) {
           level++;
-          print("\n\nSo, now you see the output of the given program and observe that it exited normally with with code 015.\nWe will now perform some deeper analysis based on certain features that gdb provides.\n", true);
-          print("\nTo continue, let us have a look at the main function. To print a particular function, type 'l <function_name>'.", true);
-        } else if (cmd == 'l' && level==2) {
-          print("\nTo continue, let us have a look at the main function. To print a particular function, type 'l <function_name>'.", true);
+          print("\n\nThis is a program which calculates the factorial of a given number.\n  The program will pause to take a number as input and then will display the output, which is the factorial of the input number\n So, now you see the output of the given program and observe that it exited normally with with code 015.\nWe will now perform some deeper analysis based on certain features that gdb provides.\n", true);
+          print("\nTo continue, let us have a look at the main function. To print main function, type 'l main'.", true);
         }
+        else if (cmd == 'l' && level==2) {
+          level++;
+          print("\nTo continue, let us have a look at some function. To print source code of factorial function, type 'l fact'.", true);
+          
+        }else if (cmd == 'l' && level == 3){
+          level++;
+          print("\nYou can pause the execution of the runing program when it reaches a specific line number or program point, by setting a breakpoint.\nLet us set a breakpoint at the main function. Type 'b main'\n .", true);
+        }
+
+        else if (cmd == 'b' && level == 4){
+          level++;
+          print("\nNow that break point has been set, you can view details about it. Type 'info b' .", true);
+
+        }
+        else if(cmd == 'info' && level==5){
+          level++;
+          print("\nBegin execution of the program by typing 'run.", true);
+
+        }
+        else if(cmd == 'run' && level==6){
+          level++;
+          print("\nWe note that the execution of the program began and has paused at the main function. Press 'n' to execute the next line of the program. This can be used for line by line execution when done repeatedly. Continue line by line execution and then when you reach the fact function call statement, type 'step' to step into the fact function \n ", true);
+
+        }
+        else if (cmd == 'step' && level == 7) {
+          level++;
+          print("\nNow you are inside the fact function. Type 'l' to view the next lines to be executed\n .", true);
+        }
+        else if (cmd == 'l' && level == 8) {
+          level++;
+          print("\nNote that we have a loop here. Set a breakpoint at the beginning of the loop\n .", true);
+        }
+
+
+
 
 
 
