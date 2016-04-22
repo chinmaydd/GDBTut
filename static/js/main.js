@@ -248,26 +248,25 @@ msg.lang = 'en-US';
         _history.push(cmd);
 
         if (cmd == 'help') {
-          level ++;
           speakUp("The above is the help menu. You can try out commands from the same and explore the environment.");
           print("\nThe above is the help menu! You can try out commands from the same and explore the environment.\nWhen ready, type 'run'.", true);
         }
         if( cmd == 'run' && level == 1) {
           level++;
-          speakUp("This is a program which calculates the factorial of a given number. So, now you see the output of the given program.");
+          speakUp("This is a program which calculates the factorial of a given number. You now see the output of the given program. To continue, print the main function details.");
           print("\n\nThis is a program which calculates the factorial of a given number.\nThe program will pause to take a number as input and then will display the output,\nwhich is the factorial of the input number.\nSo, now you see the output of the given program and observe that it exited normally with with code 015.\nWe will now perform some deeper analysis based on certain features that gdb provides. Also, we would\ntry to find out the error in the program which seems to be giving the wrong output\n", true);
-          print("\nTo continue, let us have a look at the main function. To print main function, type 'l main'.", true);
+          print("\nTo continue, let us take a look at the main function. To print main function, type 'l main'.", true);
 
 
         } else if (cmd == 'l main' && level==2) {
           level++;
-          speakUp("To continue, let us have a look at some function. Print source code of factorial function.");
-          print("\nTo continue, let us have a look at some function. To print source code of factorial function, type \n'l fact'.", true);
+          speakUp("To continue, let us have a look at the source code of the factorial function.");
+          print("\nLet us understand the factorial function. To print source code of factorial function, type \n'l fact'.", true);
 
         } else if (cmd == 'l fact' && level == 3){
           level++;
           speakUp("You can pause the execution of the runing program when it reaches a specific line number or program point by setting a breakpoint.");
-          print("\nYou can pause the execution of the runing program when it reaches a specific line number or program point,\nby setting a breakpoint.\nLet us set a breakpoint at the main function. Type 'b main'\n .", true);
+          print("\nYou can pause the execution of the runing program when it reaches a specific line number or program point,\nby setting a breakpoint.\nLet us set a breakpoint at the main function. Type 'b main'.\n", true);
         } else if (cmd == 'b main' && level == 4){
           level++;
           speakUp("Now that break point has been set, you can view details about it.");
@@ -296,7 +295,7 @@ msg.lang = 'en-US';
           print("\nYou can also print the values of certain variables at every breakpoint by using the 'display' command.\nType 'display f' to print the value of f at every iteration.\n", true);
         } else if (cmd == 'display f' && level == 10) {
           level++;
-          speakUp("You can print the value of the loop counter variabe at every iteration.");
+          speakUp("You can print the value of the loop counter variable at every iteration.");
           print("\nType 'display i' to print the value of the loop counter variabe at every iteration.\n", true);
         } else if (cmd == 'display i' && level == 11) {
           level++;
@@ -352,7 +351,7 @@ msg.lang = 'en-US';
 
   window.onload = function() {
 
-    speakUp("Welcome! GDB, the GNU Project debugger, allows you to see what is going on inside another program while it executes.");
+    speakUp("Welcome! GDB, the GNU Project debugger, allows you to see what is going on inside another program while it executes. When ready, type run.");
 
     $output = document.getElementById("output");
     $output.contentEditable = true;
