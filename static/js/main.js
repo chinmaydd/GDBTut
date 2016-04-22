@@ -24,9 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-(function() {
+var level = 1;
+var msg = new SpeechSynthesisUtterance();
+var voices = window.speechSynthesis.getVoices();
+msg.voice = voices[10]; // Note: some voices don't support altering params
+msg.voiceURI = 'native';
+msg.volume = 1; // 0 to 1
+msg.rate = 1; // 0.1 to 10
+msg.pitch = 0.8; //0 to 2
+msg.lang = 'en-US';
 
-  var level = 0;
+ (function() {
   var $output;
   var _inited = false;
   var _locked = false;
@@ -205,6 +213,11 @@
     print("");
   }
 
+  function speakUp(text) {
+    msg.text = text;
+    speechSynthesis.speak(msg);
+  }
+
   function command(cmd) {
     print("\n");
     if ( cmd.length ) {
@@ -227,7 +240,6 @@
           contentType: "application/json; charset=utf-8",
           data: JSON.stringify({'command': cmd}),
           success: function(data) {
-            debugger
               var result = data['result'];
               result += "\n"
               print(result || "\n", true);
@@ -235,83 +247,74 @@
         })).done(function() {
         _history.push(cmd);
 
-        if (cmd == 'help' && level == 0) {
+        if (cmd == 'help') {
           level ++;
+          speakUp("The above is the help menu. You can try out commands from the same and explore the environment.");
           print("\nThe above is the help menu! You can try out commands from the same and explore the environment.\nWhen ready, type 'run'.", true);
         }
-        else if(cmd == 'run' && level==1) {
+        if( cmd == 'run' && level == 1) {
           level++;
-          print("\n\nThis is a program which calculates the factorial of a given number.\n  The program will pause to take a number as input and then will display the output, which is the factorial of the input number\n So, now you see the output of the given program and observe that it exited normally with with code 015.\nWe will now perform some deeper analysis based on certain features that gdb provides. Also, we would try to find out the error in the program which seems to be giving the wrong output\n", true);
+          speakUp("This is a program which calculates the factorial of a given number. So, now you see the output of the given program.");
+          print("\n\nThis is a program which calculates the factorial of a given number.\nThe program will pause to take a number as input and then will display the output,\nwhich is the factorial of the input number.\nSo, now you see the output of the given program and observe that it exited normally with with code 015.\nWe will now perform some deeper analysis based on certain features that gdb provides. Also, we would\ntry to find out the error in the program which seems to be giving the wrong output\n", true);
           print("\nTo continue, let us have a look at the main function. To print main function, type 'l main'.", true);
-        }
-        else if (cmd == 'l' && level==2) {
-          level++;
-          print("\nTo continue, let us have a look at some function. To print source code of factorial function, type 'l fact'.", true);
-          
-        }else if (cmd == 'l' && level == 3){
-          level++;
-          print("\nYou can pause the execution of the runing program when it reaches a specific line number or program point, by setting a breakpoint.\nLet us set a breakpoint at the main function. Type 'b main'\n .", true);
-        }
 
-        else if (cmd == 'b' && level == 4){
-          level++;
-          print("\nNow that break point has been set, you can view details about it. Type 'info b' .", true);
 
-        }
-        else if(cmd == 'info' && level==5){
+        } else if (cmd == 'l main' && level==2) {
           level++;
-          print("\nBegin execution of the program by typing 'run.", true);
+          speakUp("To continue, let us have a look at some function. Print source code of factorial function.");
+          print("\nTo continue, let us have a look at some function. To print source code of factorial function, type \n'l fact'.", true);
 
-        }
-        else if(cmd == 'run' && level==6){
+        } else if (cmd == 'l fact' && level == 3){
           level++;
-          print("\nWe note that the execution of the program began and has paused at the main function. Press 'n' to execute the next line of the program. This can be used for line by line execution when done repeatedly.\n Set a breakpoint after the function call statement Continue line by line execution and then when you reach the fact function call statement, type 'step' to step into the fact function \n ", true);
+          speakUp("You can pause the execution of the runing program when it reaches a specific line number or program point by setting a breakpoint.");
+          print("\nYou can pause the execution of the runing program when it reaches a specific line number or program point,\nby setting a breakpoint.\nLet us set a breakpoint at the main function. Type 'b main'\n .", true);
+        } else if (cmd == 'b main' && level == 4){
+          level++;
+          speakUp("Now that break point has been set, you can view details about it.");
+          print("\nNow that break point has been set, you can view details about it. Type 'info b'.", true);
 
-        }
-        else if (cmd == 'step' && level == 7) {
+        } else if (cmd == 'info b' && level==5){
           level++;
-          print("\nNow you are inside the fact function. Type 'l' to view the next lines to be executed\n .", true);
-        }
-        else if (cmd == 'l' && level == 8) {
+          speakUp("Begin execution of the program by typing run.");
+          print("\nBegin execution of the program by typing 'run'.", true);
+        } else if (cmd == 'run' && level==6){
           level++;
-          print("\nNote that we have a loop here. Set a breakpoint at the beginning of the loop. So, the program will pause once, whenever one loop iteration is completed\n .", true);
-        }
-        else if (cmd == 'b' && level == 9) {
-          level++;
-          print("\nYou can also print the values of certain variables at every breakpoint by using the 'display' command. Type 'display f' to print the value of f at every iteration\n .", true);
-        }
-         else if (cmd == 'display' && level == 10) {
-          level++;
-          print("\nType 'display i' to print the value of the loop counter variabe at every iteration\n .", true);
-        }
+          speakUp("We note that the execution of the program began and has paused at the main function.");
+          print("\nWe note that the execution of the program began and has paused at the main function. Press 'n' to execute\nthe next line of the program. This can be used for line by line execution when done repeatedly.\nSet a breakpoint after the function call statement Continue line by line execution and then when you reach\nthe fact function call statement, type 'step' to step into the fact function.\n ", true);
 
-         else if (cmd == 'display' && level == 11) {
+        } else if (cmd == 'step' && level == 7) {
           level++;
-          print("\nWe can now continue the execution of the program. Type continue and observe the value of the display variables at each breakpoint\n .", true);
-        }
-
-         else if (cmd == 'c' && level == 12) {
+          speakUp("Now you are inside the fact function.");
+          print("\nNow you are inside the fact function. Type 'l' to view the next lines to be executed.\n", true);
+        } else if (cmd == 'l' && level == 8) {
+          level++;
+          speakUp("Set a breakpoint at the beginning of the loop.");
+          print("\nNote that we have a loop here. Set a breakpoint at the beginning of the loop. So, the program will pause\nonce, whenever one loop iteration is completed.\n", true);
+        } else if (cmd == 'b' && level == 9) {
+          level++;
+          speakUp("You can also print the values of certain variables at every breakpoint");
+          print("\nYou can also print the values of certain variables at every breakpoint by using the 'display' command.\nType 'display f' to print the value of f at every iteration.\n", true);
+        } else if (cmd == 'display f' && level == 10) {
+          level++;
+          speakUp("You can print the value of the loop counter variabe at every iteration.");
+          print("\nType 'display i' to print the value of the loop counter variabe at every iteration.\n", true);
+        } else if (cmd == 'display i' && level == 11) {
+          level++;
+          speakUp("We can now continue the execution of the program.");
+          print("\nWe can now continue the execution of the program. Type continue and observe the value of the display\nvariables at each breakpoint.\n", true);
+        } else if (cmd == 'c' && level == 12) {
           //level++;
-
-          print("\n Type 'info b' if you reach the outside the function, back inside main\n .", true);
-        }
-
-
-        else if (cmd == 'info' && level == 12) {
+          print("\nType 'info b' if you reach the outside the function, back inside main.\n", true);
+        } else if (cmd == 'info b' && level == 12) {
           level++;
+          speakUp("You see a list of breakpoints which you had set.");
+          print("\nYou see a list of breakpoints which you had set. You can delete them too by typing 'del <bpno>' like 'del 1' \n .", true);
 
-          print("\n You see a list of breakpoints which you had set. You can delete them too by typing 'del <bpno>' like 'del 1' \n .", true);
-        }
-
-
-        else if (cmd == 'del' && level == 13) {
+        } else if (cmd == 'del 1' && level == 13) {
           level++;
-
-          print("\n You can continue the execution and end the program. Thank You\n .", true);
+          speakUp("You can continue the execution and end the program. Thank You.");
+          print("\nYou can continue the execution and end the program. Thank You.\n", true);
         }
-
-
-
         print("\n\n" + _prompt());
       });
       }
@@ -348,6 +351,9 @@
   }
 
   window.onload = function() {
+
+    speakUp("Welcome! GDB, the GNU Project debugger, allows you to see what is going on inside another program while it executes.");
+
     $output = document.getElementById("output");
     $output.contentEditable = true;
     $output.spellcheck = false;
@@ -401,13 +407,11 @@
       }
 
       var k = ev.which || ev.keyCode;
-      debugger
       if ( k == 13 ) {
         var cmd = _buffer.join('').replace(/\s+/, ' ');
         _buffer = [];
         command(cmd);
       } else if (k == 33) {
-        debugger
       }
       else {
         if ( !_locked ) {
@@ -451,14 +455,14 @@
     print(padCenter("Welcome to the GDB tutorial.\n", 113), true);
 
     print("\n\n", true);
-    print("GDB, the GNU Project debugger, allows you to see what is going on `inside' another program while it executes -- or what another program was doing at the moment it crashed.\n\n\n", true);
-    print("GDB can do four main kinds of things (plus other things in support of these) to help you catch bugs in the act:\n", true);
+    print("GDB, the GNU Project debugger, allows you to see what is going on 'inside' another program while it\nexecutes-- or what another program was doing at the moment it crashed.\n\n\n", true);
+    print("GDB can do four main kinds of things (plus other things in support of these) to help you catch bugs\nin the act:\n", true);
     print("• Start your program, specifying anything that might affect its behavior.\n", true);
     print("• Make your program stop on specified conditions.\n", true);
     print("• Examine what has happened, when your program has stopped.\n", true);
-    print("• Change things in your program, so you can experiment with correcting the effects of one bug and go on to learn about another.\n\n", true);
+    print("• Change things in your program, so you can experiment with correcting the effects of one bug and go on to\nlearn about another.\n\n", true);
     // print("Type 'help' for a list of available commands.\n", true);
-    print("Let us run our program now, shall we? Please type 'run' in the prompt to clear level1.\n", true);
+    print("Let us run our program now, shall we? Please type 'run' in the prompt to clear Level 1.\n", true);
     print("\n\n" + _prompt());
 
   };

@@ -66,7 +66,7 @@ body {
   right : 5px;
   font-family : Monospace;
   color : #fff;
-  font-size : 15px;
+  font-size : 18px;
   text-align : right;
 }
 
@@ -344,7 +344,7 @@ body {
   box-sizing: border-box;
   background : transparent;
   font-family : MyFont, Monospace;
-  font-size : 15px;
+  font-size : 18px;
 /*  overflow-y: scroll;*/
   line-height : 20px;
   /*color : #00ff77;*/
