@@ -20,6 +20,12 @@ To run the Python server, you will require bottle. You can install it using pip:
 $ pip install bottle
 ```
 
+For the audio manipulation you will need SoX(Sound eXchange), which can be installed as:
+
+```
+$ sudo apt-get install sox
+```
+
 You will also need to compile the main.c file in the test directory as:
 ```bash
 $ gcc -g -o test/a.out main.c
